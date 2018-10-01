@@ -8,5 +8,5 @@ name = "uitest"
 path = "src/main.rs"
 
 [dependencies]
-plygui = {version = "0.0.1", path = "../plygui/src/lib", features = ["win32"]}
-plygui-webview = {version = "0.0.1", path = "../plygui-webview", features = ["win32"]}
+plygui = {version = "0.0.1", path = "../plygui"}
+plygui-webview = {version = "0.0.1", path = "../plygui-webview"}

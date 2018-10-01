@@ -43,8 +43,7 @@ fn create_vertical_layout() -> Box<Control> {
     let butt1_id = button.id();
     //button.set_layout_params(layout::Params::WrapContent, layout::Params::MatchParent);
     button.on_click(Some(
-        (|b: &mut Button| {
-             println!("button clicked: {}", b.label());
+        (|b: &mut Clickable| {
              b.set_visibility(Visibility::Gone);
              //b.set_visibility(Visibility::Invisible);
              
@@ -66,10 +65,10 @@ fn create_vertical_layout() -> Box<Control> {
 
     let mut button = plygui::imp::Button::with_label("Butt2");
     button.on_click(Some(
-        (move |b: &mut Button| {
-            println!("button clicked: {} / {:?}", b.label(), b.as_control().id());
+        (move |b: &mut Clickable| {
             {
-            	let parent = b.parent().unwrap();
+            	let id = b.id();
+            	let parent = b.is_control_mut().unwrap().parent().unwrap();
                 let parent_member_id = parent.as_any().get_type_id();
                 println!("parent is {:?}", parent_member_id);
 
@@ -78,13 +77,13 @@ fn create_vertical_layout() -> Box<Control> {
                 println!(
                     "clicked is {:?}",
                     parent
-                        .find_control_by_id(b.id())
+                        .find_control_by_id(id)
                         .unwrap()
                         .as_any()
                         .get_type_id()
                 );
             }
-            let root = b.root_mut().unwrap();
+            let root = b.is_control_mut().unwrap().root_mut().unwrap();
             let root_member_id = root.as_any().get_type_id();
             println!("root is {:?}", root_member_id);
 
