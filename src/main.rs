@@ -1,8 +1,3 @@
-#![feature(get_type_id)]
-
-extern crate plygui;
-extern crate plygui_webview;
-
 use plygui::*;
 use plygui_webview::*;
 
@@ -33,8 +28,8 @@ fn create_button(name: &str) -> Box<Control> {
 
 fn create_vertical_layout() -> Box<Control> {
 	let mut vb = plygui::imp::LinearLayout::with_orientation(layout::Orientation::Vertical);
-    vb.on_resize(Some(
-        (|_: &mut Member, w: u16, h: u16| {
+    vb.on_size(Some(
+        (|_: &mut HasSize, w: u16, h: u16| {
              println!("wb resized to {}/{}", w, h);
          }).into(),
     ));
@@ -44,7 +39,7 @@ fn create_vertical_layout() -> Box<Control> {
     //button.set_layout_params(layout::Params::WrapContent, layout::Params::MatchParent);
     button.on_click(Some(
         (|b: &mut Clickable| {
-             b.set_visibility(Visibility::Gone);
+             b.as_any_mut().downcast_mut::<plygui::imp::Button>().unwrap().set_visibility(Visibility::Gone);
              //b.set_visibility(Visibility::Invisible);
              
              let parent = b.is_control_mut().unwrap().parent_mut().unwrap().is_container_mut().unwrap().is_multi_mut().unwrap();
@@ -56,8 +51,8 @@ fn create_vertical_layout() -> Box<Control> {
              }
          }).into(),
     ));
-    button.on_resize(Some(
-        (|_: &mut Member, w: u16, h: u16| {
+    button.on_size(Some(
+        (|_: &mut HasSize, w: u16, h: u16| {
              println!("button resized too to {}/{}", w, h);
          }).into(),
     ));
@@ -69,7 +64,7 @@ fn create_vertical_layout() -> Box<Control> {
             {
             	let id = b.id();
             	let parent = b.is_control_mut().unwrap().parent().unwrap();
-                let parent_member_id = parent.as_any().get_type_id();
+                let parent_member_id = parent.as_any().type_id();
                 println!("parent is {:?}", parent_member_id);
 
                 let parent: &Container = parent.is_container().unwrap();
@@ -80,11 +75,11 @@ fn create_vertical_layout() -> Box<Control> {
                         .find_control_by_id(id)
                         .unwrap()
                         .as_any()
-                        .get_type_id()
+                        .type_id()
                 );
             }
             let root = b.is_control_mut().unwrap().root_mut().unwrap();
-            let root_member_id = root.as_any().get_type_id();
+            let root_member_id = root.as_any().type_id();
             println!("root is {:?}", root_member_id);
 
             let root: &mut Container = root.is_container_mut().unwrap();
@@ -93,8 +88,8 @@ fn create_vertical_layout() -> Box<Control> {
             butt1.set_visibility(Visibility::Visible);
         }).into(),
     ));
-    button.on_resize(Some(
-        (|_: &mut Member, w: u16, h: u16| {
+    button.on_size(Some(
+        (|_: &mut HasSize, w: u16, h: u16| {
              println!("button resized too to {}/{}", w, h);
          }).into(),
     ));
@@ -104,12 +99,12 @@ fn create_vertical_layout() -> Box<Control> {
 }
 
 fn main() {
-    let mut application = plygui::imp::Application::with_name("Plygui test");
+    let mut application = plygui::imp::Application::get();
 
-    let mut window = application.new_window("plygui!!", WindowStartSize::Exact(1280, 800), WindowMenu::None);
+    let mut window = application.new_window("plygui!!", WindowStartSize::Exact(1280, 800), None);
 
-    window.on_resize(Some(
-        (|_: &mut Member, w: u16, h: u16| {
+    window.on_size(Some(
+        (|_: &mut HasSize, w: u16, h: u16| {
              println!("win resized to {}/{}", w, h);
          }).into(),
     ));
