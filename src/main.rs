@@ -5,25 +5,8 @@ fn create_webview() -> Box<Control> {
 	let mut w = plygui_webview::imp::WebView::new();
 	w.set_layout_width(layout::Size::MatchParent);
 	w.set_layout_height(layout::Size::MatchParent);
-	w.go_to("https://github.com");
+	w.set_url("https://github.com");
 	w.into_control()
-}
-
-fn create_frame() -> Box<Control> {
-	let mut frame = plygui::imp::Frame::with_label("Horizontal Frame");    
-    
-    frame.set_child(Some(create_webview()));
-	frame.set_layout_width(layout::Size::MatchParent);
-    frame.set_layout_height(layout::Size::MatchParent);
-    
-	frame.into_control()
-}
-
-fn create_button(name: &str) -> Box<Control> {
-	let mut button = plygui::imp::Button::with_label(name);
-    button.set_layout_width(layout::Size::WrapContent);
-    button.set_layout_height(layout::Size::WrapContent);
-    button.into_control()
 }
 
 fn create_vertical_layout() -> Box<Control> {
@@ -36,19 +19,25 @@ fn create_vertical_layout() -> Box<Control> {
 
 	let mut button = plygui::imp::Button::with_label("Butt1");
     let butt1_id = button.id();
+    let wv = create_webview();
+    let wv_id = wv.id();
     //button.set_layout_params(layout::Params::WrapContent, layout::Params::MatchParent);
     button.on_click(Some(
-        (|b: &mut Clickable| {
-             b.as_any_mut().downcast_mut::<plygui::imp::Button>().unwrap().set_visibility(Visibility::Gone);
+        (move |b: &mut Clickable| {
+                let b = b.as_any_mut().downcast_mut::<plygui::imp::Button>().unwrap();
+             //b.set_visibility(Visibility::Gone);
              //b.set_visibility(Visibility::Invisible);
-             
+             /*
              let parent = b.is_control_mut().unwrap().parent_mut().unwrap().is_container_mut().unwrap().is_multi_mut().unwrap();
              
              if parent.len() < 3 {
              	parent.push_child(create_frame());
              } else {
              	parent.pop_child();
-             }
+             }*/
+             let wv = b.root().unwrap().is_container().unwrap().find_control_by_id(wv_id).unwrap().as_any().downcast_ref::<plygui_webview::imp::WebView>().unwrap();
+             
+             let _ = plygui::imp::Message::start_with_actions(TextContent::LabelDescription("Loaded at".into(), wv.url().into()), MessageSeverity::Info, vec![], None);
          }).into(),
     ));
     button.on_size(Some(
@@ -94,7 +83,7 @@ fn create_vertical_layout() -> Box<Control> {
          }).into(),
     ));
     vb.push_child(button.into_control());
-    vb.push_child(create_webview());
+    vb.push_child(wv);
     vb.into_control()
 }
 
