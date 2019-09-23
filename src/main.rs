@@ -14,6 +14,7 @@ fn create_vertical_layout() -> Box<Control> {
     vb.on_size(Some(
         (|_: &mut HasSize, w: u16, h: u16| {
              println!("wb resized to {}/{}", w, h);
+             true
          }).into(),
     ));
 
@@ -35,7 +36,8 @@ fn create_vertical_layout() -> Box<Control> {
              } else {
              	parent.pop_child();
              }*/
-             let wv = b.root().unwrap().is_container().unwrap().find_control_by_id(wv_id).unwrap().as_any().downcast_ref::<plygui_webview::imp::WebView>().unwrap();
+             let app = plygui::imp::Application::get().unwrap();
+             let wv = app.find_member(FindBy::Id(wv_id)).unwrap().as_any().downcast_ref::<plygui_webview::imp::WebView>().unwrap();
              
              let _ = plygui::imp::Message::start_with_actions(TextContent::LabelDescription("Loaded at".into(), wv.url().into()), MessageSeverity::Info, vec![], None);
          }).into(),
@@ -43,6 +45,7 @@ fn create_vertical_layout() -> Box<Control> {
     button.on_size(Some(
         (|_: &mut HasSize, w: u16, h: u16| {
              println!("button resized too to {}/{}", w, h);
+             true
          }).into(),
     ));
     vb.push_child(button.into_control());
@@ -61,7 +64,7 @@ fn create_vertical_layout() -> Box<Control> {
                 println!(
                     "clicked is {:?}",
                     parent
-                        .find_control_by_id(id)
+                        .find_control(FindBy::Id(id))
                         .unwrap()
                         .as_any()
                         .type_id()
@@ -73,13 +76,14 @@ fn create_vertical_layout() -> Box<Control> {
 
             let root: &mut Container = root.is_container_mut().unwrap();
 
-            let butt1 = root.find_control_by_id_mut(butt1_id).unwrap();
+            let butt1 = root.find_control_mut(FindBy::Id(butt1_id)).unwrap();
             butt1.set_visibility(Visibility::Visible);
         }).into(),
     ));
     button.on_size(Some(
         (|_: &mut HasSize, w: u16, h: u16| {
              println!("button resized too to {}/{}", w, h);
+             true
          }).into(),
     ));
     vb.push_child(button.into_control());
@@ -88,13 +92,14 @@ fn create_vertical_layout() -> Box<Control> {
 }
 
 fn main() {
-    let mut application = plygui::imp::Application::get();
+    let mut application = plygui::imp::Application::get().unwrap();
 
     let mut window = application.new_window("plygui!!", WindowStartSize::Exact(1280, 800), None);
 
     window.on_size(Some(
         (|_: &mut HasSize, w: u16, h: u16| {
              println!("win resized to {}/{}", w, h);
+             true
          }).into(),
     ));
 
