@@ -36,8 +36,8 @@ fn create_vertical_layout() -> Box<Control> {
              } else {
              	parent.pop_child();
              }*/
-             let app = plygui::imp::Application::get().unwrap();
-             let wv = app.find_member(FindBy::Id(wv_id)).unwrap().as_any().downcast_ref::<plygui_webview::imp::WebView>().unwrap();
+             let app = b.root_mut().unwrap().as_base_mut().application_mut::<plygui::imp::Application>();
+             let wv = app.find_member_mut(FindBy::Id(wv_id)).unwrap().as_any().downcast_ref::<plygui_webview::imp::WebView>().unwrap();
              
              let _ = plygui::imp::Message::start_with_actions(TextContent::LabelDescription("Loaded at".into(), wv.url().into()), MessageSeverity::Info, vec![], None);
          }).into(),
@@ -92,10 +92,10 @@ fn create_vertical_layout() -> Box<Control> {
 }
 
 fn main() {
-    let mut application = plygui::imp::Application::get().unwrap();
+    let mut application = plygui::imp::Application::with_name("Plygui-Webview");
 
-    let mut window = application.new_window("plygui!!", WindowStartSize::Exact(1280, 800), None);
-
+    let mut window = application.new_window::<plygui::imp::Window>("plygui!!", WindowStartSize::Exact(1280, 800), None);
+    let window = application.find_member_mut(FindBy::Id(window)).unwrap().as_any_mut().downcast_mut::<plygui::imp::Window>().unwrap();
     window.on_size(Some(
         (|_: &mut HasSize, w: u16, h: u16| {
              println!("win resized to {}/{}", w, h);
