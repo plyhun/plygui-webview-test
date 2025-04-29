@@ -8,6 +8,10 @@ edition = "2018"
 name = "uitest"
 path = "src/main.rs"
 
+[patch.crates-io]
+qt_ritual_build = { git = "https://github.com/snuk182/ritual.git", rev = "7b7cd06" }
+
 [dependencies]
-plygui = {version = "0.0.1", path = "../plygui/lib", features = ["gtk3"]}
-plygui-webview = {version = "0.0.1", path = "../plygui-webview", features = ["gtk3"]}
+#plygui = {version = "0.0.1", path = "../plygui/lib", features = ["gtk3"]}
+plygui = {version = "0.0.1", path = "../plygui-qt", package = "plygui-qt"}
+plygui-webview = {version = "0.0.1", path = "../plygui-webview", features = ["qt5"]}
